@@ -241,7 +241,11 @@ export default {
       const qty = this.get_item_qty(this.first_search);
       const new_item = { ...this.filtred_items[0] };
       console.info(new_item, flt(qty/((new_item.rate ? new_item.rate:1))));
-      new_item.qty = flt(qty/((new_item.rate ? new_item.rate:1)));
+      
+      if (first_search.startsWith(this.pos_profile.posa_scale_barcode_start)) {
+        new_item.qty = flt(qty/((new_item.rate ? new_item.rate:1)));
+      }
+
       new_item.item_barcode.forEach((element) => {
         if (this.search == element.barcode) {
           new_item.uom = element.posa_uom;
