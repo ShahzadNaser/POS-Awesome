@@ -231,6 +231,7 @@ export default {
       if (item.has_variants) {
         evntBus.$emit('open_variants_model', item, this.items);
       } else {
+        frappe.utils.play_sound("submit");
         evntBus.$emit('add_item', item);
       }
     },
@@ -241,7 +242,7 @@ export default {
       const qty = this.get_item_qty(this.first_search);
       const new_item = { ...this.filtred_items[0] };
       console.info(new_item, flt(qty/((new_item.rate ? new_item.rate:1))));
-      
+
       if (this.first_search.startsWith(this.pos_profile.posa_scale_barcode_start)) {
         new_item.qty = flt(qty/((new_item.rate ? new_item.rate:1)));
       }
