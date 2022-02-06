@@ -344,14 +344,38 @@ def update_invoice(data):
         if not ref_doc.update_stock:
             invoice_doc.update_stock = 0
 
+    item_codes = []
+    item_rates = {}
+    item_tax_templates = {}
+
     for item in invoice_doc.items:
         add_taxes_from_tax_template(item, invoice_doc)
+ 
     if frappe.get_value("POS Profile", invoice_doc.pos_profile, "posa_tax_inclusive"):
         if invoice_doc.get("taxes"):
             for tax in invoice_doc.taxes:
                 tax.included_in_print_rate = 1
 
     invoice_doc.save()
+
+    for item in invoice_doc.items:
+        item_codes.append([item.get("item_code"), item.get("name")])
+        item_rates[item.get("name")] = item.get("rate")
+        item_tax_templates[item.get("name")] = item.get("item_tax_template")
+
+    from erpnext.stock.get_item_details import get_item_tax_info
+    tax_info = get_item_tax_info(company=invoice_doc.company, tax_category=invoice_doc.tax_category, item_codes=item_codes, item_rates=item_rates, item_tax_templates=item_tax_templates)
+
+    for item in invoice_doc.items:
+        item.item_tax_template = tax_info[item.name].get("item_tax_template")
+        item.item_tax_rate = tax_info[item.name].get("item_tax_rate")
+
+    for tax in invoice_doc.get('taxes'):
+        tax.rate = 0
+        tax.item_wise_tax_detail = ''
+
+    invoice_doc.save()
+
     return invoice_doc
 
 
