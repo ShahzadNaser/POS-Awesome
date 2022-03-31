@@ -28,7 +28,7 @@
             @keydown.enter="enter_event"
           ></v-text-field>
         </v-col>
-        <v-col cols="12" class="pt-0 mt-0">
+        <v-col cols="12" class="pt-0 mt-0 hide">
           <div fluid class="items" v-if="items_view == 'card'">
             <v-row dense class="overflow-y-auto" style="max-height: 67vh">
               <v-col
